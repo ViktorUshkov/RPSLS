@@ -16,6 +16,45 @@ WAYS_TO_WIN = {
     "спок": ["ножницы", "камень"]
 }
 
+# количество очков, необходимых для итоговой победы
+POINTS_TO_WIN = 3
+
+
+def series(player_name: str) -> bool:
+    """
+    Функция, в рамках которой проходит серия раундов игры до 3 побед одного из участников. В случае победы игрока
+    функция возвращает True, в случае победы компьютера функция возвращает False
+
+    :param player_name: имя игрока
+    :return: одержал ли игрок победу
+    """
+    # счёт игрока
+    player_score: int = 0
+    # счёт компьютера
+    computer_score: int = 0
+
+    print(f"Игра начинается. Текущий счёт: {player_name} {player_score}:{computer_score} Компьютер.")
+    while player_score < POINTS_TO_WIN and computer_score < POINTS_TO_WIN:
+        # фигура, выбранная игроком
+        player_move: str = input("Ваш ход - введите фигуру: ").lower()
+        if player_move not in OPTIONS:
+            print("Я не знаю такой фигуры. Повторите ввод")
+            continue
+        # фигура, выбранная компьютером
+        computer_move: str = OPTIONS[randint(0, 4)]
+        print(f"Компьютер выбрал: {computer_move}")
+        if computer_move in WAYS_TO_WIN[player_move]:
+            player_score += 1
+            print(f"{player_name} выигрывает раунд!")
+        elif player_move == computer_move:
+            print("В этом раунде ничья!")
+        else:
+            computer_score += 1
+            print("Компьютер выигрывает раунд!")
+        print(f"Текущий счёт: {player_name} {player_score}:{computer_score} Компьютер.")
+
+    return True if player_score == POINTS_TO_WIN else False
+
 
 def game_cycle() -> None:
     """
@@ -24,13 +63,17 @@ def game_cycle() -> None:
     """
     while True:
         # переменная, отображающая статус игрока
-        playing: str = input("Хотите ли вы сыграть? Введите 'Y' или 'N': ")
+        playing: str = input("Хотите ли вы сыграть? Введите 'Y' или 'N': ").upper()
         match playing:
             case 'Y':
                 # переменная, содержащая имя игрока
                 player_name: str = input("Введите ваше имя, боец: ")
-                print(f"Игра начинается! Матч идёт до трёх побед\nТекущий счет: {player_name} 0:0 Компьютер")
-                ...
+                # переменная, содержащая исход игры: True в случае итоговой победы игрока и False в ином случае
+                result: bool = series(player_name)
+                if result:
+                    print("Поздравляем с победой!")
+                else:
+                    print("В следующий раз повезёт!")
             case 'N':
                 print("Увидимся в следующий раз!")
                 quit()
